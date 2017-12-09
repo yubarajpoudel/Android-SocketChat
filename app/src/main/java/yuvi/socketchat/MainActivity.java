@@ -69,14 +69,15 @@ public class MainActivity extends AppCompatActivity {
 
 
         try {
-            socket = IO.socket("http://chat.hamroapi.com/");
-            socket.emit("join", new JSONObject().put("name", "yubaraj"));
+//            socket = IO.socket("http://chat.hamroapi.com/");
+            socket = ((MainApplication)getApplication()).getSocket();
+            socket.emit("join", new JSONObject().put("name", "yubaraj").put("room", "myroom"));
 //            socket.emit("message", "yubaraj send message");
             socket.on("message", new Emitter.Listener() {
                 @Override
                 public void call(final Object... args) {
                     JSONObject mJson = ((JSONObject) args[0]);
-                    final String data = mJson.optString("name") + " : " + mJson.optString("message") + " at " + new SimpleDateFormat("HH:mm:ss").format(new Date(mJson.optLong("timestamp")));
+                    final String data = mJson.optString("message") + " \n" + mJson.optString("name") + ",\t " + new SimpleDateFormat("HH:mm:ss").format(new Date(mJson.optLong("timestamp")));
                     MainActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -121,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 socket.emit("typing", "Yubaraj is typing");
                 typingHandler.removeCallbacks(checkStatusRunnable);
-                typingHandler.postDelayed(checkStatusRunnable, 3000);
+                typingHandler.postDelayed(checkStatusRunnable, 1000);
 
             }
 
